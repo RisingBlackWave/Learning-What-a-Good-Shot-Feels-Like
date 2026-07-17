@@ -1,0 +1,370 @@
+%% ============================================================
+%%  Learning What a Good Shot Feels Like  --  CHI 2027 working draft
+%%  COMPILE WITH XeLaTeX  (Overleaf: Menu > Compiler > XeLaTeX)
+%%  Reason: verbatim Chinese quotes handled by xeCJK.
+%%
+%%  APPROACH NAME: threaded through the \approach macro below.
+%%    You marked the name as changing ("new"). Set the final term ONCE
+%%    on the \newcommand line and it updates everywhere.
+%%
+%%  Framing locked (BASELINE_v9): felt reference = standard/content;
+%%    recognition capacity = faculty; frame/value split;
+%%    accountability without rigidity; M1--M4.
+%%  Citations kept inline as [Author Year] (no fabricated .bib).
+%%  \vf{...} marks draft-only flags -- remove before submission.
+%% ============================================================
+\documentclass[sigconf]{acmart}
+
+% --- PACKAGES ---
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{xcolor} % for the \vf draft-flag macro
+
+% --- CJK (XeLaTeX) ---
+\usepackage{xeCJK}
+\setCJKmainfont{FandolSong} % Overleaf-available; swap if unavailable
+
+% --- MACROS ---
+\newcommand{\approach}{signal-triggered reflective elicitation} % TODO: set final approach name here
+\newcommand{\Approach}{Signal-triggered reflective elicitation}
+\newcommand{\vf}[1]{\textcolor{red}{[\textsc{#1}]}}
+
+% --- BIBTEX SETUP ---
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+% --- PREPRINT FORMATTING ---
+\setcopyright{none}
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\pagestyle{plain}
+
+% --- CONFERENCE METADATA (placeholder; confirm before submission) ---
+\acmConference[CHI '27]{Proceedings of the 2027 CHI Conference on Human Factors in Computing Systems}{2027}{TBD}
+\acmYear{2027}
+% \acmDOI{}   % do not reuse another paper's DOI
+% \acmISBN{}
+
+\begin{document}
+
+\title{Learning What a Good Shot Feels Like}
+\subtitle{\Approach{} for Building the Felt Reference in Solo Basketball Practice}
+
+% TODO: confirm co-author list.
+\author{Yifu Liu}
+\email{yifu.liu.22@ucl.ac.uk}
+\affiliation{%
+  \institution{University College London}
+  \city{London}
+  \country{United Kingdom}
+}
+
+% \author{[Co-author]}
+% \email{[email]}
+% \affiliation{\institution{[institution]}\city{[city]}\country{[country]}}
+
+\author{Nadia Bianchi-Berthouze}
+\orcid{0000-0001-8921-0044}
+\email{n.berthouze@ucl.ac.uk}
+\affiliation{%
+  \institution{University College London}
+  \city{London}
+  \country{United Kingdom}
+}
+
+\renewcommand{\shortauthors}{Liu et al.}
+
+\begin{abstract}
+In solo basketball practice, where most shooting repetitions happen and no coach is present, a player has no reliable way to judge, from bodily feel, whether a shot was well executed. We call the obstacle the \emph{felt--actuation gap}: the player's first-person felt account of a shot and the third-person account reconstructible from sensors are dissociated. Two things are missing in solo practice. The player lacks a \emph{felt reference}, their own standard for what a good shot is, and the \emph{recognition capacity} to judge, by feel, whether a shot met that felt reference. Existing AI shooting systems reproduce only the instructive half of coaching: they sense the shot, diagnose its deviation from a fixed template, and deliver a correction. This makes the felt--actuation gap visible but does not help the player close it, and it leaves the player dependent on external feedback rather than building their own felt reference and recognition capacity. We report a formative study of coached and solo practice that characterises the felt--actuation gap and the elicitation strategies coaches use to help players build their own felt reference rather than match a template. We then introduce \emph{\approach}, an interaction approach that uses real-time kinematic and biosignal evaluation not to deliver a correction but to time and target reflective prompts, so that the player builds a felt reference and trains the recognition capacity to judge against it. \Approach{} prescribes the \emph{frame}, which bodily cue to attend to and its safe range, but co-constructs the \emph{value}, what is correct on that cue for this player, and holds the player accountable to their own felt reference while keeping it open to revision, a principle we call \emph{accountability without rigidity}. We instantiate the approach as four reusable mechanisms over EMG and vision and evaluate it in a within-subject Wizard-of-Oz study against a strong prescriptive-delivery agent. \vf{results one-liner to be added}
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10003120.10003121</concept_id>
+       <concept_desc>Human-centered computing~Human computer interaction (HCI)</concept_desc>
+       <concept_significance>500</concept_significance>
+       </concept>
+   <concept>
+       <concept_id>10003120.10003121.10011748</concept_id>
+       <concept_desc>Human-centered computing~Empirical studies in HCI</concept_desc>
+       <concept_significance>300</concept_significance>
+       </concept>
+</ccs2012>
+\end{CCSXML}
+\ccsdesc[500]{Human-centered computing~Human computer interaction (HCI)}
+\ccsdesc[300]{Human-centered computing~Empirical studies in HCI}
+
+\keywords{Felt reference, Recognition capacity, Reflective elicitation, Motor learning, Somatic awareness, EMG, Basketball shooting, Wizard-of-Oz, Conversational agent}
+
+% --- TEASER (add asset then uncomment) ---
+% \begin{teaserfigure}
+%   \centering
+%   \includegraphics[width=\textwidth]{figures/system_overview.jpg}
+%   \caption{System overview.}
+%   \Description{System overview figure.}
+%   \label{Fig:Cover}
+% \end{teaserfigure}
+
+\maketitle
+
+%% ============================================================
+\section{Introduction}
+
+Learning to shoot a basketball well requires two kinds of knowledge: correct posture, which can be told, and a \emph{felt reference}, the player's own standard for what a good shot is, together with the \emph{recognition capacity} to judge from the inside whether a shot met it, which cannot. The second is what transfers to a game, and it is hard to build alone. The shot is brief and hidden: a few hundred milliseconds, and the player cannot watch their own release. Without external feedback, players relies on shot outcome in most solo practice, which is not ideal because outcome and execution are decoupled: a mechanically poor shot can drop, and a well-produced shot can rim out. This obstacle is known as \emph{felt-actuation gap}: the player's first-person felt account of a shot movement and the third-person account the actual movement, e.g. a player could lose control of the body movement, so proprioception alone cannot certify whether a movement met its standard. The gap is trainable [Garfinkel et al.\ 2015; Christensen et al.\ 2018], most so when feedback is contingent on the actual event rather than an ambient, non real-time display [Meyerholz et al.\ 2019], but training it takes what a coach supplies and the solo player lacks: attention directed to a cue, and the player's felt account checked against what their body did. 
+
+
+
+Sensing-and-AI systems for motor skill could play that role, but they are built for the opposite move. The dominant pipeline senses the movement, models its deviation from a correct form, and delivers a verdict or correction [Weng et al.\ 2025; Ma et al.\ 2026; Lin et al.\ 2021; PoseCoach 2022]. This is genuinely useful for the acute correction of a clear fault, and we treat prescriptive delivery as a necessary channel rather than a mistake. But it addresses only the tellable half of coaching: it targets the production of the movement against an external standard and returns the judgement to the player, rather than helping the player build their own.
+
+What these systems do not do is build the player's felt reference. Surfacing a deviation makes the felt--actuation gap visible without closing it [Weng et al.\ 2025], and delivering the verdict is itself what motor-learning theory warns blocks a learner from developing the capacity to judge for themselves [Salmoni et al.\ 1984]. Two further costs appear precisely in the game. By the specificity of practice, learning bound to an external information source falls away when that source is withdrawn, and a template overlay or generated cue is absent the moment the player shoots alone or under defence, whereas the player's own felt reference is present on every shot. And explicit rules about where a joint should be are the kind of knowledge that comes apart under pressure, when attention turns back on execution [Beilock and Carr 2001]. Across sport-AI, reflective HCI, and somaesthetic design, one cell is unoccupied: no system uses real-time sensing to help a player build a personalised felt reference for a skilled action, eliciting and grounding the player's own evaluation rather than delivering one, in solo practice where the coach's scaffold is absent.
+
+We occupy that cell with \emph{\approach} \vf{approach name pending}: an interaction approach that uses real-time kinematic and biosignal evaluation not to deliver a correction but to time and target reflective prompts, so the player builds a felt reference and trains the recognition capacity to judge against it. The commitment that separates it from prescriptive systems is a split coaches make and current systems collapse. Shooting knowledge has a \emph{frame}, which bodily cue to attend to and its safe range, which can be told and is shared; and it has a \emph{value}, what is correct on that cue for this player, which is personal and cannot be handed over. \Approach{} prescribes the frame and co-constructs the value: there is no fixed ideal on the value axis, and the felt reference is located with the player, within a safe range, so comfortable cannot drift from correct [Beilock and Carr 2001]. Once located, the system holds the player accountable to their own felt reference while keeping it open to revision, a principle we call \emph{accountability without rigidity}. Grounded in a formative study of how expert coaches build the felt reference, we instantiate the approach as four reusable mechanisms over forearm and lower-leg EMG and body pose, and study it in solo practice against a strong prescriptive-delivery agent. It is not a gentler prescription, and its direction of learning is inside-out, the player building and owning the standard, rather than outside-in, moulding the body to a template.
+
+This paper contributes: \textbf{(C1)} an empirical characterisation, from coached and solo practice, of the felt--actuation gap and how coaches build the felt reference, including the line they draw between what they standardise (the frame) and what they leave to felt experience (the value); \textbf{(C2)} \emph{\approach}, an interaction approach realised as six design goals and four reusable mechanisms over EMG and vision, that builds a felt reference and trains recognition capacity by prescribing the frame and co-constructing the value under accountability without rigidity, and is transferable to other skilled-motor, craft, and music settings; and \textbf{(C3)} a process-level, mixed-methods account of how the approach is used and experienced relative to strong prescriptive delivery, and of the role and limits of sensor-grounded AI for felt-reference building without a coach.
+
+%% ============================================================
+\section{Related Work}
+
+\paragraph{AI and AR sport coaching deliver prescriptions.} The closest precedent is Weng et al.'s knowledge-based SOP framework for basketball shooting mechanics [Weng et al.\ 2025], which encodes coaching knowledge as a standard operating procedure and delivers feedback against it; and AgentCoach [Ma et al.\ 2026], which extracts coaching points from tutorial video, compiles evaluators that map each cue to kinematic parameters, and delivers prescriptive verbal feedback that adapts to the learner's history. ViSTAR [ViSTAR 2026] translates 3D joint features into natural-language coaching cues via an LLM; Lin et al.\ [Lin et al.\ 2021] established the AR free-throw paradigm; PoseCoach [PoseCoach 2022] and related systems render the difference between novice and reference as visual comparison. Across this line the feedback direction is system-to-athlete and the standard is a fixed ideal that personalisation approximates. None builds the player's own evaluative standard. This is the empty cell our C2 occupies; strong-version prescriptive delivery is our comparison agent, built fairly rather than as a straw man.
+
+\paragraph{Reflective agents scaffold inquiry, but on behaviour not the motor felt correlate.} Reflective-informatics work frames reflection as breakdown, inquiry, and transformation, and notes that technology tends to support the breakdown while leaving inquiry to the user [Baumer 2015]; we scaffold the inquiry step. Structured reflective chatbots such as the Rebo line [Wolfbauer et al.\ 2020; Wolfbauer et al.\ 2023] show that a well-formed question sequence drives reflection even without adaptivity, and voice-based reflection agents [Kocielnik et al.\ 2018] show modality reduces friction. These target reflection on context and behaviour, not the felt correlate of a motor execution, and are not contingent on good-form movement.
+
+\paragraph{Somatic and felt-sense HCI cultivate articulation without a correctness criterion.} Soma design [Höök 2018] and felt-sense articulation methods drawing on Gendlin's Focusing [Núñez-Pacheco and Loke 2018] develop ways to help people notice and put words to vague bodily sensation. We adopt this articulation move but bind it to a correctness standard in skilled motor learning.
+
+\paragraph{Motor-learning theory grounds the frame/value split.} Schmidt's schema theory [Schmidt 1975] distinguishes a recall schema that produces movement from a recognition schema that evaluates it by its expected sensory consequences; the felt reference is the first-person register of this recognition standard. The guidance hypothesis [Salmoni et al.\ 1984] warns that excessive instruction blocks learners from building their own intrinsic reference. The internal-focus debate is unsettled: the constrained-action advantage of external focus [Wulf 2013; Chua et al.\ 2021] was substantially attenuated under bias-corrected reanalysis [McKay et al.\ 2024], and recent work reframes the question as task-relevance [Herrebøden 2022] and decouples attentional locus from target [Daşdöğen et al.\ 2025]. Our prompts direct attention to task-relevant internal cues between shots, in the preparation phase of the next shot rather than during execution [Aiken and Becker 2022]. Ecological dynamics and the degeneracy principle [Davids et al.\ 2008; Newell 1986] supply the warrant for the value axis: there is no single ideal technique, each performer settles a functional individual solution within constraints.
+
+\paragraph{EMG biofeedback and interoception: the signal-triggered-reflection gap.} Across roughly forty EMG-in-sport studies, the signal is displayed, scored, or sonified and the learner is instructed to reduce error; interoception work shows the underlying alignment is trainable and best trained by contingent feedback [Garfinkel et al.\ 2015; Christensen et al.\ 2018; Meyerholz et al.\ 2019]. To our knowledge none uses an EMG event as a detector that triggers a reflective prompt. That inversion is our technical instantiation, developed fully as a sensing contribution in a separate paper.
+
+\paragraph{LLM health and activity coaching operate post-hoc or on behaviour.} PhysioLLM [PhysioLLM] \vf{verify venue} supports personalised understanding of wearable data through dialogue; GPTCoach [GPTCoach 2025] applies LLM-driven motivational interviewing to physical-activity behaviour change. Both operate on post-hoc data exploration or on whether one exercises, not on the felt quality of a movement, in real time, during the skill. The niche we claim is the conjunction that no prior system holds together: real-time, body-signal-event-triggered, on felt execution, and bound to a correctness standard.
+
+%% ============================================================
+\section{Formative Study (Phase 1)}
+
+\subsection{Aim and research questions}
+
+Technique in shooting is propositional and externalisable. An elbow position, a release point, a follow-through arc can be written down, demonstrated, and checked against a standard, the form of procedure recent systems encode and deliver [Weng et al.\ 2025]. What cannot be written down is the felt signature of executing that technique correctly. In Schmidt's terms, prescription can hand over a recall schema, how to produce the movement, but not the recognition schema, how to evaluate the movement from its anticipated sensory consequences [Schmidt 1975]. The first-person standard the recognition schema evaluates against is the \emph{felt reference}; the capacity to run that evaluation from the inside is the \emph{recognition capacity}. The guidance hypothesis warns that over-prescription blocks a learner from building their own [Salmoni et al.\ 1984].
+
+Two things are uncharacterised in the literature. The structure of the felt--actuation gap in shooting has not been described: which dimensions of execution are accessible to first-person articulation, which are not, and what an accurate felt reference consists of. And how coaches build a player's felt reference in practice, what they standardise, what they leave to feeling, and what a solo player without that scaffold is left unable to do, has not been documented. We ask three questions.
+
+\begin{description}[leftmargin=1.2em]
+  \item[F-RQ1.] What is the structure of the felt--actuation gap in shooting: which dimensions of execution are accessible to first-person articulation, which are not, and what does an accurate felt reference consist of?
+  \item[F-RQ2.] How and when do coaches build a player's felt reference, through what methods, language, and strategies, and in response to what specific problems, and what barriers does a player encounter building a felt reference alone?
+  \item[F-RQ3.] What is the relationship between technique guidance and felt-reference building: where do coaches standardise and where do they leave it to the player's own feeling, what cues do they respond to, and what does an intervention consist of?
+\end{description}
+
+\subsection{Method}
+
+We studied two settings. In coach-led practice we observed and recorded one-on-one shooting sessions, then conducted video-elicited interviews in which coaches reflected on the strategies they had used and on the role of felt sense in training; one coach contributed a pedagogical interview walking through his method directly. In solo practice we observed players practising alone, asked them to think aloud while shooting and to reflect between shots on how they were engaging with their body, and unpacked selected moments in a brief end-of-session interview, for example a made shot a player rejected as lucky, or a felt-effort report that contradicted the outcome.
+
+\begin{table}[t]
+\footnotesize
+\caption{Coach corpus.}
+\label{tab:coaches}
+\begin{tabular}{@{}llp{1.1cm}p{2.4cm}l@{}}
+\toprule
+Coach & Region & Exp. & Data collected & Status \\
+\midrule
+C1 & UK & \vf{fill} & 3 observed 1-on-1 sessions (S1--S3) + video-elicited interview & analysed \\
+C2 & CN & \vf{fill} & pedagogical / method interview (I2) & analysed \\
+C3--C5 & --- & --- & --- & \vf{confirm} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\footnotesize
+\caption{Player corpus.}
+\label{tab:players}
+\begin{tabular}{@{}llp{2.2cm}p{2.4cm}@{}}
+\toprule
+Player & Region & Role in corpus & Data type \\
+\midrule
+CN\_P01 & CN & solo practice & think-aloud + brief interview \\
+CN\_P02 & CN & solo practice & think-aloud + brief interview \\
+CN\_P03 & CN & solo practice & think-aloud + brief interview \\
+CN\_P04 & CN & solo practice & think-aloud + interview \vf{questioner identity} \\
+R (author) & UK/CN & in-session (S1--S3) + solo (I1) & first-person / autoethnographic pilot \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We transcribed the recordings and conducted reflexive thematic analysis [Braun and Clarke 2019] in two passes, building coach and solo typologies separately and then synthesising across settings; coding was bottom-up.
+
+Three rules bound what the analysis can claim. Phase 1 has no third-person sensing channel, so every gap instance is a player's self-reported felt--outcome mismatch or a coach's articulated diagnosis, not a measured discrepancy. Moments where felt sense correctly predicted outcome are reported alongside the gaps, because the gap is defined relative to these matches and omitting them would misrepresent the phenomenon as a uniform deficit rather than a calibration gradient. And gap codes were applied conservatively, only where a player's own language marked a felt--outcome mismatch, since most 「短」 or 「歪」 utterances are accurate predictions rather than gap evidence.
+
+\paragraph{Scope and saturation.} The coach corpus is one UK and one CN coach with the first author as player; the solo corpus is four CN players practising alone, where the dominant destabiliser is fatigue rather than deliberately varied conditions. The taxonomies below are offered as an analytic frame the system instantiates, not a saturated population model. The destabilisation thread rests on two participants and is reported as preliminary; the dimensional account and rulebook in Section~\ref{sec:dimensional} draw substantially on one coach's articulation (I2); and the forearm-articulability finding, which the system design leans on heavily, is flagged for a second coder \vf{verify}.
+
+\subsection{What a felt reference is, and why it is central (F-RQ1)}
+
+A shot is brief and hidden. It lasts a few hundred milliseconds, the player cannot watch their own release, and in solo practice, where most players take most of their repetitions, no observer is there either. The only feedback that arrives is the ball, and the ball is a poor teacher: it comes after the movement is over, it varies, and it can mislead. P03 dismissed a make that felt wrong as 「歪打正着」 (in by luck) and noted 「小了，但碰进去了」 (short, but it bumped in); P04 moved from shot to shot reporting only the result, 「这球短一点」 (a bit short), 「刚刚好」 (just right). To learn from practice rather than be misled by it, a player needs something the ball cannot supply: an internal standard for what a correct shot feels like, and the capacity to judge the movement against it as it happens. P01 had both: 「这球出手前就感觉到出手短了」 (I could feel before the ball left my hand that it was short), a verdict reached from the inside, before the outcome existed.
+
+The internal standard is the \emph{felt reference}; the capacity to judge a shot against it, from the inside, is the \emph{recognition capacity}. In Schmidt's terms the felt reference is the first-person face of the recognition schema's anticipated sensory consequences, and the recognition capacity is the evaluative operation that uses it, distinct from the recall schema that produces the movement [Schmidt 1975]. Holding the ideal form is the producing side; recognising from the inside that one hit it is the evaluating side, and the second does not come free with the first. It is its own skill, and like any skill it has to be trained, which is the premise of everything that follows.
+
+Both settings converge on this, and on a sharper point: what coaches train is not a single correct form. The two coaches differed widely in drills and philosophy, the UK coach working from a read-and-react stance, the CN coach (I2) from a structured frame-by-frame breakdown, yet both grew each player's own comfortable-and-effective shot rather than certifying posture against one template. The UK coach was explicit that he does not build fixed choreography (``we don't work on choreography''), because a game almost never returns the same shot twice (``very rarely do you get the same shot two times in a row in games'' \vf{verify-VL}), so he trains body control rather than moves and keeps variables in every drill. The form itself has to vary; what must persist across those variations is the felt reference and the recognition capacity, not a fixed posture. This personalisation, the player's own functional solution rather than a uniform standard, is the felt counterpart to the procedural standard that SOP-based systems encode [Weng et al.\ 2025]\,\vf{verify: convergent personalisation vs contrast}.
+
+Because the felt reference is internal and personal, the player must learn to read it honestly, which means decoupling felt execution from the made or missed shot. Players already do this in fragments: P03's 「歪打正着」 is a make rejected on felt grounds; P01's 「虽然进了，但感觉不是空心儿，有点偏左」 (it went in, but it didn't feel clean, a bit left) is the same move. But they do it inconsistently, and coaches make it doctrine. The UK coach distinguishes valuable makes from hollow ones (``not all makes are valuable makes''), and the CN coach pre-sets 「一个比较合理的出手」 (a reasonable shot to expect) rather than 「仅仅是观察球是否进」 (merely watching whether it goes in), explicitly setting aside the ``lucky ball''. To train the felt reference and recognition capacity is therefore to train an evaluation more objective than the scoreboard and runnable anywhere, which is what lets a player adapt and improvise to the varying demands of the game rather than reproduce one grooved shot.
+
+None of this is automatic. Left alone, attention defaults to the outcome (P04's running verdicts) rather than to felt quality, and players reported that they could not see their own execution from the inside: 「不能感受到自己的这个身体发力是否流畅…不能从第三视角…看我这个整体」 (I can't sense whether my force is flowing, can't see my whole self from a third-person view). Building a felt reference is therefore an intentional undertaking, not a by-product of repetition. It requires learning what to feel and what to look for in body control, the dimensional account of Section~\ref{sec:dimensional}, and assembling those into a personalised reference the player owns. The pay-off is self-sufficiency: a player with a built felt reference is no longer dependent on a coach or any external feedback to know whether a shot was good, and that capacity is precisely what solo practice lacks and what the system sets out to support.
+
+\subsection{How coaches build the felt reference (F-RQ2, F-RQ3)}
+
+Coaching opens from a thin prescriptive base: the tellable elements of technique, the elbow fixed and steady at a high position, a fixed release point, an arc of roughly forty to fifty degrees, the wrist consistent at release (``if we don't have consistency of the wrist... we're not going to be accurate'' \vf{verify-VL}). This is the part a written standard can encode [Weng et al.\ 2025]. But the prescriptive layer is held as a \textbf{coverage map, not a verdict}, a baseline of invariants the dialogue can check a player's attention against, not a posture that overrules the player's own comfortable solution (Section~\ref{sec:dimensional}). The main work of training is exploratory and elicitative, and across both coaches it ran through three strategies. These strategies motivate the mechanisms of Section~\ref{sec:design}: Strategy~1 grounds M1, Strategy~2 grounds M2 and M3, and Strategy~3 grounds the loaded stage in which M4 fires.
+
+\paragraph{Strategy 1: analogy and imagery, to direct attention and simplify body control.} Both coaches leaned heavily on imagery to make a complex, fast movement comprehensible and feelable, and to anchor a player's personalised felt reference. A single image does triple duty, carrying a location, a quality, and a phase at once and giving a vague sensation something to hold onto. The CN coach's 铁轨 / 列车轨道 (rails / train tracks) is the clearest case: 「虎口带着这两个手指作为铁轨指向篮筐，你的球基本就是直的」 (the web carries the two fingers as rails pointing at the rim, and the ball goes straight), reinforced by the observation that a good shooter's misses go front-to-back, not left-to-right. One token specifies a locus (the two fingers), a direction (toward the rim), a quality (parallel alignment), and a phase (release through follow-through). Other images did the same for other parts: 像跑步 (the arm swinging like running) for a loose powered swing, and in the UK sessions the string, the dumbbell, the bands on the ground, the ceiling-as-magnet, and ``imagine they cut your feet, and you just drop down'' \vf{verify-VL} for the hip drop. Imagery also carried personalised alignment cues for an elite shooter: the coach kept the line from nose to navel inside the rim (``the line between his nose and his belly button is staying in the rim'') and worked the correlation of ears, shoulders, and toes. Tellingly, imagery is not only delivered; players reach for it unprompted, anchoring a felt target to a professional's shot (P01 「感觉像杜兰特的出手」 / 「有点像姚明」; P03 「叔叔有点像科比」), which suggests analogy is a route players already travel and the system can travel with them. And an analogy is not understood and then performed: coaches let the image be embodied across repetitions, adjusting it as the player's feel for it forms.
+
+\paragraph{Strategy 2: prompting introspective sensing and articulation.} Coaches repeatedly asked the player to sense a specific quality and put it into words, handing the player the attribution rather than supplying it, the move that turns a sensation into a held, named part of a personalised felt reference. The probes were differentiated: open (``where do you think we have better shooting accuracy?''; 「出手一瞬间的发力感觉到底是怎么样的？」), comparison (``if you compare these three shots, where did you have the most balance?''), sensation-specific (``when you were in the air, fading sideways or away from the basket?''; 「让球员自己去不断感知…是向上，还是有一个向后的力」), and hypothesis-handing (``did you change something?''). The aim is to have the player think and feel at the same time and articulate in their own words, so the felt reference being built is theirs. Two devices sharpened this. First, \textbf{delayed feedback}: the coach withheld the verdict to force the player to attend and self-organise (``I'll try to let you figure out through reps, and then we're going to have feedback time''), making the withheld-verdict reps the place where intrinsic error-detection develops [Wulf and Lewthwaite 2016]. Second, \textbf{recalibration against a perturbation}: in the leverage-contrast drill the coach applied external force and had the player feel their balance by contrast (``I'm simply providing leverage to him, and then we contrast that leverage release with a non-leverage one'' \vf{verify-VL}), using counter-force to re-find a felt balance the player could then carry. Coaches also used the player's own form video as an \textbf{elicitation tool}, asking the player to watch and identify their own unnecessary motion, surfacing the felt--actuation gap by letting the player see what they could not feel.
+
+\paragraph{Strategy 3: drills that train or break body control through variance.} Coaches systematically varied the conditions of the shot so the felt reference was repeatedly put under new load. Some drills built control by isolating a feeling, form shooting that strips the movement to 「完全基本上孤立，只是上肢的这种感觉」 (basically isolated, just the upper-body feeling), or fixing one locus and ignoring the result (「这个球进或者不进无所谓，我们先要做的就是固定好肘的角度起球」, fix the elbow angle, the make doesn't matter). Others broke control to test and rebuild it, limiting footwork to make the shooter uncomfortable on purpose (``limiting footwork makes it very uncomfortable for shooters, which is what we're trying to do'' \vf{verify-VL}), or varying distance, angle, release speed, on- and off-the-dribble, shooting against applied leverage, and shooting at a raised heart rate. Each added factor puts the felt reference under a condition it must hold across. Crucially, cognitive and decision load entered only through this drill structure, a shot clock, a defender, a sequence, and never as a direct in-shot instruction, a division the system preserves by placing prompts between shots.
+
+\subsection{Barriers to building and holding a felt reference (F-RQ2)}
+
+The strategies above respond to a set of recurring failures, which we organise by how a felt reference goes missing, misread, hidden, disrupted, or knocked out of calibration. Coach diagnosis and solo self-report largely converge, and the destabilisation case is now corroborated from both sides.
+
+\paragraph{No reference system.} The most basic case is the solo player who has not built a felt reference at all and falls back on substitutes. Without an internal standard to judge against, the player reaches for external feedback they do not have (「没有人在帮你看…得有人帮你盯着」, with no one watching, you need someone to watch for you), over-attends to the outcome (P04's running verdicts), and cannot see their own execution to correct it (「不能从第三视角…看我这个整体」). Once form drifts they cannot find their way back, because they have no internal target to return to.
+
+\paragraph{Outcome--feel decoupling.} Even players who attend to feel must learn that feel and outcome diverge: the made shot can be wrong and the missed shot can be right. Players show it spontaneously (P03 「歪打正着」), and coaches make it explicit, the UK coach separating valuable makes from ``misses that just went in'' \vf{verify-VL} and the CN coach setting aside the ``lucky ball''. The leverage-contrast drill is a manufactured version of the same lesson: under applied leverage the outcome stops tracking execution, so the player must read success from felt balance rather than from whether the ball fell.
+
+\paragraph{Below-awareness habits.} A large class of faults runs below the player's awareness: the body repeats a habituated pattern the player cannot feel and cannot override by deciding to. Three recurred. A force-chain disconnect, force breaking between regions or firing out of sequence, which players name 脱节 (coming apart): 「上半身的出手和你蹬地…脱节，发力脱节」 (the release and the push-off do not cooperate), with the coach reading its cause as upstream tension (「肩膀上肢很紧张，下肢的力就传不上来」). A wrong body position the player does not register, the elite shooter unknowingly introducing rotation or lateral flexion (``he feels like he's rotating''; ``not allowing any lateral flexion in his core'' \vf{verify-VL}). And elbow flare, the textbook below-awareness habit: 「下意识…外翻…肌肉记忆…大脑还是想控制住」 (without thinking the elbow flares, it's muscle memory, but my mind still wants to hold it). These persist precisely because they do not cost the made shot; P03 knew his wrist tended to 打飘 (wobble) yet it continued because it did not break the outcome. This is why comfort is not a safe guide: habitual movement feels normal and is least available to attention [Beilock and Carr 2001]. One state is sharper than the rest: forearm tension is something the coach attends to closely (「他会很早的把投篮手想要去找到…对应的就是一个小臂的一个紧张」) yet for which players had essentially no felt vocabulary, a divergence we return to in Section~\ref{sec:dimensional} because it sets the design's hardest task \vf{verify: second coder}.
+
+\paragraph{Misplaced attention that changes the form.} Distinct from a habit running below awareness, attention can be present but pointed at the wrong place, and the act of over-attending breaks the flow. The recurrent case is anticipation: attention runs ahead to the release and the forearm pays for it upstream (「他会很早的把投篮手想要去找到投篮这个位置…小臂紧张」, he tries to find the shooting position too early and the forearm tightens; 「球拿的太窄了，才会导致收小臂」, holding the ball too narrow makes the forearm contract). The failure is one of where attention is, not of effort, which makes it the clearest case for shaping attention toward the right phase and target rather than adding instruction [Masters and Maxwell]\,\vf{verify}.
+
+\paragraph{Reference destabilisation.} A felt reference the player had can be knocked out of calibration, so the same intended effort no longer produces the same shot. Two factors recurred. Raised heart rate: 「心跳还是很快…本来觉得这个力度是够的…短一点」 (heart still racing, you thought the force was enough, but it comes out short), with the coach observing what the player cannot (「心率变高…姿势会不稳定…他们是控制不了的…自己意识不到」). That the player 「意识不到」 (does not realise) is the destabilisation stated from the coach side: felt effort held constant, actual output changed, the player blind to the difference. And lack of recent training, where body familiarity itself degrades (「磨合那个阶段…很难及时调整出手感」). Both are the same mode, a built felt reference perturbed, and the challenge is re-finding the feel from a vague bodily state.
+
+\paragraph{Solo-specific barriers.} Certain structural conditions are specific to practising alone. Self-rebounding competes directly with attention to felt sense (P03: 「自投自捡…捡球会分担你很大一部分的注意力…练习投篮一定要专心」). Solo practice cannot reproduce the contest and cardio of a game, so the conditions under which a felt reference must hold are absent. And there is no external view and no one to regulate load, so players keep shooting past form-collapse into 变形 (deformed form) with no one to call a stop. These define the coach-can / solo-can't delta the system must address.
+
+\subsection{The dimensional reference and golden-rule rulebook (F-RQ1, F-RQ3)}
+\label{sec:dimensional}
+
+The dimensions named across the failures above collect into a single frame describing what an accurate felt reference attends to, and the standardisable part can be stated as an explicit rulebook. This is the bridge to design: it defines the cue library the system draws on (the frame) and the parameters its evaluators read.
+
+\paragraph{The parameter frame.} A felt reference is organised along four dimensions. \emph{Locus} is the part of the body attended to, from the two fingers and the web (虎口) to the wrist, forearm, elbow, shoulder, hips, feet, or the body as a whole. \emph{Quality} is what is attended to at that locus, and it is not a single tension scale but several: the data separates rigidity from tension explicitly, a wrist should be 「刚性弹性」 (rigid-elastic) but 「上肢太紧了…力量是发不出来的」 (too tense and the power cannot come out), and the shoulder is 「松的，是有力量的」 (loose and yet powered), so a felt reference carries at least three quality axes (tension/looseness, rigidity/elasticity, position/stability), not one relaxation continuum. \emph{Relation} is how parts connect: whether force transfers along the chain, in what direction and sequence, and whether the body moves as one (一体 vs 脱节). \emph{Phase} is the moment in the shot, from setup and load through lift, release, and follow-through. Two further distinctions cut across these: the source of a signal (proprioceptive, visual, or from effort) and whether a sensation is below awareness, noticed, or put into words.
+
+\paragraph{The golden-rule rulebook.} Coaches standardise a specific, statable set of invariants, phrased as what each part should do, indexed to phase, rather than as static angles (Table~\ref{tab:rulebook}). This is the layer the system holds as its comparison baseline: the reference against which the dialogue can tell which dimension a player may be neglecting. It is used as a coverage map, not a verdict that overrules the player's own comfortable solution; the individual deviations a player settles within these invariants are the felt content the player owns. The rulebook draws substantially on one coach's articulation (I2) corroborated by the UK sessions (S1--S3), and is offered as a design baseline, not a validated population standard.
+
+\begin{table*}[t]
+\centering
+\scriptsize
+\caption{The golden-rule rulebook: standardisable invariants indexed to locus and phase, with felt-quality targets and dialogue role. Evidence IDs reference the coded corpus.}
+\label{tab:rulebook}
+\begin{tabular}{@{}p{1.6cm}p{1.7cm}p{5.2cm}p{2.6cm}p{2.4cm}p{2.2cm}@{}}
+\toprule
+Locus & Phase & Golden-rule invariant (what it should do) & Felt-quality target & Role in dialogue & Evidence \\
+\midrule
+Base \& feet & setup $\rightarrow$ load & balanced stance, slightly wider than shoulders; weight even; no second active push-off that throws the body back & balance, even loading & foundation & I2 5:11--5:12; I1 4:10; S1 1:51; S2 2:16 \\
+Hip / pelvis & load $\rightarrow$ lift & hinge at the hips to load; compress one side and send the other forward in balanced asymmetry; hips lead before the hands reach & compression, balance & force origin + balance anchor & I2 5:2, 5:13, 5:15; S1 1:49, 1:52 \\
+Whole-body chain & load $\rightarrow$ release & legs supply force, upper body swings the ball up, led by raising the upper arm not the forearm/hand; force transfers cleanly bottom-to-top without 脱节 & connectedness (一体) vs coming-apart & ties the rest & I2 5:6, 5:16, 5:35; S1 1:46; I1 4:16 \\
+Shoulder & setup $\rightarrow$ lift & pivot/axis of the arm swing; loose while still powered & looseness; sync-as-pivot & relational & I2 5:22; S2 2:6 \\
+Elbow & lift $\rightarrow$ release & fixed and stable at a high position; no sink-and-reload; fixed release point & stability; position & direction / structure & I2 5:25, 5:27, 5:29, 5:31; S1 1:12 \\
+Forearm & catch $\rightarrow$ lift & stays loose, compressing only naturally; ball not held too narrow; the feeling is ``push'', not ``pull-in'' & looseness; ``push'' not ``pull-in'' & diagnostic (tension = upstream error) & I2 5:36, 5:39, 5:41 \\
+Wrist & lift $\rightarrow$ release & rigid-elastic and ``locked'', not tense; pre-cocked slightly; carries the ball forward and snaps at release & rigidity/elasticity; lock & gatekeeper of release quality & I2 5:4, 5:5, 5:7, 5:10; S1 1:8 \\
+Two fingers \& web (虎口) & catch $\rightarrow$ follow-through & ball pressed into the web; two fingers as rails pointing at the rim; ball rolls off the fingertips last & pressure-contact; crisp release (脆) & primary anchor & I2 5:43, 5:44; S1 1:47; P01 \\
+Gaze & preparation $\rightarrow$ release & continuous rim vision; aiming during preparation/lift, hand and rim on one line at release & --- & external-target anchor & I2 5:20; S1 1:11, 1:48 \\
+Ball flight & release & arc roughly 40--50\textdegree{} with backspin, an after-the-fact confirmation not the thing to chase & (visual confirmation) & outcome-quality check & I2 5:26; S1 1:38, 1:43 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{The solo-vocabulary overlay.} Laying the solo players' felt vocabulary over this frame yields the design's most actionable output, a map of where to elicit an existing feel versus where to build a new one. Where attention had been trained, players had rich words and the system can ask them to attend and refine: force (发力 / 收力 / 续不上), the connected-or-broken chain (脱节 / 连贯 / 一体), and, for P01, release texture (「这种感觉很脆」, 「球从手指尖拨过」). Where attention had not been trained, the felt quality stayed unspoken and there is nothing yet to elicit: forearm tension above all, the region where shooting skill is most concentrated yet for which no player had a native felt word, and fine wrist-snap timing, present only coarsely. For these the system cannot draw out an existing feel; it must direct attention there repeatedly until some felt sense and some words begin to form. One trap qualifies the whole overlay: global comfort words (舒服 / 顺 / 正常) index ease, which can co-occur with the least conscious access, so 舒服 must not be read as good form.
+
+\paragraph{What this frame is, and is not.} It is the felt counterpart to a technique standard, and it differs from both neighbours it might be confused with. A knowledge standard specifies what to do at each phase as rules that can be written and checked [Weng et al.\ 2025]; the rulebook above can play that role, but the frame around it specifies what to attend to and what it should feel like, which has to be built through practice. It also differs from somaesthetic approaches that cultivate a general attentiveness to the body [Höök 2018; Shusterman 2008], because it is tied to a specific standard of correctness, a good shot, indexed to the phases and priorities of one skill.
+
+%% ============================================================
+\section{Design: \Approach}
+\label{sec:design}
+
+\subsection{Construct}
+The system serves two coupled objects. The \emph{felt reference} is content: the player's own personal, bounded, revisable standard for a correct shot. The \emph{recognition capacity} is faculty: the ability to judge, from internal feel, whether a shot met that standard. They form a loop, and neither is an external fixed ideal: recognition is needed to judge which explored variant is good (to build the reference), and the reference is what recognition judges against.
+
+\subsection{Design goals}
+The design must achieve the following, stated at one tier, with no separate governing principle above them.
+
+\begin{description}[leftmargin=1.2em]
+  \item[Two purposes.] Build the felt reference; train recognition capacity.
+  \item[Frame/value split.] Prescribe the attentional frame and its safe envelope (shared, from coach knowledge); co-construct the value within it (personal, never a template). The envelope keeps comfortable from drifting from correct [Beilock and Carr 2001].
+  \item[Accountability without rigidity.] Hold the player to their chosen standard while allowing principled revision as context changes (this is DG6).
+  \item[DG1--DG6.] (1) redirect attention from outcome to a bodily cue; (2) turn a vague felt sense into a checkable, sensor-grounded, refutable hypothesis; (3) elicit the player to articulate the felt sense in their own words; (4) let the player locate their own standard through bounded exploration; (5) reduce the felt--actual gap by confronting felt report with objective state; (6) keep the player accountable to a chosen standard while allowing revision.
+\end{description}
+
+\subsection{Mechanism design}
+We realise the goals as four mechanisms, defined by the change they produce in the player, so that each is a reusable interaction structure transferable beyond basketball.
+
+\begin{description}[leftmargin=1.2em]
+  \item[M1 Guided Exploration] (DG1--4). The system directs attention to a knowledge-seeded cue and has the player experiment across a bounded range to confirm a personal evaluator and form a self-worded handle (Strategy~1).
+  \item[M2 Articulation Grounding] (DG2--4). The player articulates a reference of their own; the system extracts it, auto-builds a candidate kinematic evaluator, and asks for approval (Strategy~2).
+  \item[M3 Predict-Then-Reveal Calibration] (DG1,2,5). The system elicits the player's felt judgment before revealing the sensor reading, surfacing any mismatch for self-correction (Strategy~2).
+  \item[M4 Reference Revision] (DG4,6). On a player request or a task change, the system re-examines the standard and, on the player's decision, updates the evaluator (Strategy~3).
+\end{description}
+
+\paragraph{Conflict rule.} When a player-originated reference falls outside the safe envelope (e.g.\ a flaring elbow the player wants to keep), the system does not hard-block or silently assert: it surfaces the tension via M3 as a felt hypothesis and resolves it via M4.
+
+%% ============================================================
+\section{System and Implementation}
+
+\paragraph{Sensing stack.} Bilateral EMG (arm via OYMotion gForcePro+ with dual-dongle capture; lower-leg via an Arduino channel) exposes the felt--actuation gap across the kinetic chain, muscle engagement, timing, and force transition, at both arm and leg; triggers are coarse and per-player-normalised. Vision runs two roles: continuous 2D pose (RTMPose ONNX) as the kinematic/temporal backbone, and selective 3D on a short mini-clip around the shot for a few force-transmission parameters where 2D is ambiguous. Ball trajectory and outcome condition context only. EMG reads what vision cannot; the two are complementary windows on the same dynamics.
+
+\paragraph{WoZ / baseline split.} A parameter schema (which sensor feature, at which phase, indexes each cue) is pre-defined and fixed across players; the personal baseline (the good range on those parameters) is built in-session from the player's explored reps. Sensing, segmentation, evaluator reading, and monitoring are automated and real-time; the wizard decides prompt content and wording between shots and overrides a wrong evaluator binding. This places timing and wording, the variables the study observes, under human control while removing the hard problem of discovering which parameter matches a novel utterance.
+
+\paragraph{The two agents.} Both share the backend and event detection; drill structure and prompt frequency are held constant. They differ in content (a felt reference the player builds vs a kinematic deviation reported), stance (eliciting vs delivering), and reference-source (personal baseline vs generic template). Agent-I is built as a fair strong-version of prescriptive delivery. The LLM pipeline is local-only for data-boundary reasons; model choice is justified with one principled argument plus one latency measurement, given wizard oversight. \vf{TODO: resolve agent platform; EMG time-sync; real-time vs offline 3D}
+
+%% ============================================================
+\section{Deployment Study (Phase 2)}
+
+\paragraph{Design.} Wizard-of-Oz, single-session, within-subject, counterbalanced; roughly 12--15 participants in solo practice; qualitative-primary with descriptive quantitative. This is a paradigm comparison, not an RCT: Agent-I (instruction-delivery) versus Agent-E (elicitation) co-vary content, stance, and reference-source by design.
+
+\paragraph{Procedure.} The player selects an upper and a lower focus. Each agent block runs the same three-stage pipeline (Table~\ref{tab:pipeline}); M4 is available in every stage.
+
+\begin{table}[t]
+\footnotesize
+\caption{Three-stage per-agent pipeline. M4 (Reference Revision) is available throughout.}
+\label{tab:pipeline}
+\begin{tabular}{@{}p{1.7cm}p{3.1cm}p{2.2cm}@{}}
+\toprule
+Stage & Mechanisms & Retrieval / logged \\
+\midrule
+Set template & M2 (elicit + ground personal reference) & \texttt{own\_felt\_reference}, upper/lower focus \\
+Static shooting & M1 (teach) in basic drills $\rightarrow$ M3 (predict--reveal) in repetitive training & personalised handles, felt reflection \\
+Dynamic shooting & loaded shooting: M3 continues + M4 (revise under load) & revision decision, reasoned basis \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Measures.} Recognition (H3) is read from logged felt-predictions: the player rates how a shot felt before the sensor state is shown, so the felt-vs-actual gap can be tracked across the session. \emph{Design fork (open):} predict-then-reveal is M3, an Agent-E mechanism, so its prediction data exists only in the Agent-E condition and is not comparable to Agent-I; a cross-condition recognition trajectory requires a neutral predict-then-reveal probe administered in both conditions, which risks contaminating the paradigm contrast if it leaks Agent-E's stance. Plus a post-activity questionnaire after each agent (perceived improvement / learning / construct-specific recognition items, off agent-time) and a comparative interview. No made/miss dependent variable; no powered A/B. Reported as effect sizes, CIs, and per-participant trajectories.
+
+\paragraph{Codeable hypotheses.} H1 own-worded evaluator (M1); H2 player-originated grounded reference (M2); H3 felt--actual gap narrows within session (M3); H4 reasoned bounded revision (M4).
+
+%% ============================================================
+\section{Results}
+\vf{placeholder: Phase 2 not yet run}
+
+Planned structure, mapped to hypotheses: (1) building the reference (H1/H2); (2) training recognition (H3), the predict-vs-actual discrepancy trajectory across the session; (3) accountability without rigidity (H4); (4) comparative paradigm accounts, Agent-I vs Agent-E, with the known confound that instruction feels more helpful surfaced and disambiguated; (5) role and limits without a coach.
+
+%% ============================================================
+\section{Discussion}
+\vf{partial: results-independent parts only}
+
+\paragraph{A design stance for sport AI: prescribe the frame, co-construct the value.} The recurring choice in movement-coaching systems is treated as a choice of how much to personalise a fixed ideal. Our formative and design work suggests a different axis: hold the frame, which cue to attend to and its safe range, as shared knowledge, and place the flexibility at the standard, located with the learner. Accountability without rigidity is the operating principle: a system can hold a learner to a standard the learner owns. This distinguishes the approach from SOP delivery (rigidity, no flexibility of standard) and from somaesthetic articulation (flexibility, no correctness criterion).
+
+\paragraph{Transferability.} The four mechanisms are defined by learner state-change and are sensor- and domain-agnostic; the same structure applies wherever a practitioner must build a felt standard for a skilled action they mostly practise alone. We note a light consistency with a parallel instantiation in craft \vf{ref Study 3}, without crowding this paper's claim.
+
+\paragraph{Limitations.} The study is single-session: we can characterise the process of building and calibrating, and within-session change (the predict-then-reveal trajectory; handle reuse), but not retention or efficacy. Recognition evidence rests on a single mechanism (M3/DG5), a single point of failure we flag. Emotional support is out of scope here and left to future work. The wizard cannot fire all mechanisms live; trigger prioritisation is specified and reported. The most granular formative mechanics derive substantially from one coach. The EMG-for-basketball sensing is reported here as means; its full treatment is a separate paper.
+
+%% ============================================================
+\section{Conclusion}
+
+Solo practice is where shooting is built and where the player is least able to see how they are shooting. Current systems close the loop from the outside, telling the player what their body did; they make the felt--actuation gap visible without closing it. We have argued, from coached and solo practice, that the missing half is a distinct and buildable pedagogical function, helping the player build their own felt reference and the recognition capacity to judge against it, and we have shown how real-time sensing can serve that function by triggering reflection rather than delivering correction: prescribing what to attend to, not what is correct, and holding the player accountable to a standard that remains their own.
+
+%% ============================================================
+%% REFERENCES
+%% TODO: convert inline [Author Year] to BibTeX \cite + references.bib.
+%% Load-bearing [verify] before submission: Weng 2025 discussion points;
+%% Ma et al. 2026 (AgentCoach); ViSTAR / PoseCoach venues; PhysioLLM venue;
+%% Liao & Masters 2001; Masters & Maxwell; Salmoni 1984; Braun & Clarke 2019.
+%% ============================================================
+% \bibliographystyle{ACM-Reference-Format}
+% \bibliography{references}
+
+\end{document}
